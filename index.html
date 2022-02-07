@@ -31,7 +31,7 @@
                 profile = await liff.getProfile();
             }
             else{
-                alert("www3")
+                alert("www4")
             }
         })
         $('#line-massage').on('submit', function(e){
@@ -46,7 +46,7 @@
                 {
                     type: 'image',
                     originalContentUrl: profile.pictureUrl,
-                    previewImageURL: profile.pictureUrl,
+                    previewImageUrl: profile.pictureUrl,
                 }
             ]).then(() => {
                 liff.closeWindow();
