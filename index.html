@@ -13,8 +13,7 @@
   <body>
     <h1>Bank Nabalone, world!</h1>
     <div class="container">
-        <form id="line-massage">
-            <input type="file" name="image">
+        <form id="line-massage"> 
             <input type="text" name="massage" class="form-control">
             <button type="submit">sent</button>
         </form>
@@ -38,17 +37,16 @@
         $('#line-massage').on('submit', function(e){
             e.preventDefault();
             let massage = $(this).find('input[name=massage]').val();
-            let image = $(this).find('input[name=image]')[0].files[0];
 
             liff.sendMassages([
                 {
                     type: 'text',
-                    text: massage
+                    text: profile.displayName + ' ส่ง ' + massage
                 },
                 {
                     type: 'image',
-                    originalContentUrl: URL.createObjectURL(image),
-                    pewviewImageURL: URL.createObjectURL(image),
+                    originalContentUrl: profile.pictureUrl,
+                    pewviewImageURL: profile.pictureUrl,
                 }
             ]).then(() => {
                 liff.closeWindow();
