@@ -14,6 +14,7 @@
     <h1>Bank Nabalone, world!</h1>
     <div class="container">
         <form id="line-massage"> 
+            <input type="file" name="image">
             <input type="text" name="massage" class="form-control">
             <button type="submit">sent</button>
         </form>
@@ -21,7 +22,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6"> </script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+        import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAF2NeWIARDugOTuBRBqDC9_tdlxUQMjEc",
+            authDomain: "bankrmutl-a9657.firebaseapp.com",
+            projectId: "bankrmutl-a9657",
+            storageBucket: "bankrmutl-a9657.appspot.com",
+            messagingSenderId: "136589925933",
+            appId: "1:136589925933:web:aa6d32e6c6c2dd4a6222a4",
+            measurementId: "G-KV6KP5JLWD"
+        };
+
+        // Initialize Firebase
+        const firebaseApp = initializeApp(firebaseConfig);
+        const storage = getStorage(firebaseApp);
+
+        const imageRef = ref(storage, "images");
+
         const liff_id = "1656870854-pPKVV2Ly";
         var profile = {};
         liff.init({
@@ -37,19 +58,32 @@
         $('#line-massage').on('submit', function(e){
             e.preventDefault();
             let massage = $(this).find('input[name=massage]').val();
+            let image = $(this).find('input[name=image]')[0].files[0];
+            let image_blob = URL.createObjectURL(image)
 
-            liff.sendMessages([
-                {
-                    type: 'text',
-                    text: profile.displayName + ' ส่ง ' + massage
-                },
-                {
-                    type: 'image',
-                    originalContentUrl: profile.pictureUrl,
-                    previewImageUrl: profile.pictureUrl,
+            uploadBytes(imageRef, image, {
+                metadata: {
+                    contentType: image.type,
+                    customMetadata: {
+                        name: profile.displayName,
+                        uid: profile.userId
+                    }
                 }
-            ]).then(() => {
-                liff.closeWindow();
+            }).then(snapshot => {
+
+                let url = snapshot.metadata.downloadURLs[0]
+                liff.sendMessages([{
+                    type: 'text',
+                    text: message
+                }, {
+                    type: 'image',
+                    originalContentUrl: url,
+                    previewImageUrl: url
+                }]).then(() => {
+                    console.log('Message sent')
+                    liff.closeWindow();
+                })
+
             })
         })
     </script>
