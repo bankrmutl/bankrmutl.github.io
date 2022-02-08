@@ -13,9 +13,9 @@
   <body>
     <h1>Bank Nabalone, world!</h1>
     <div class="container">
-        <form id="line-massage"> 
+        <form id="line-message"> 
             <input type="file" name="image">
-            <input type="text" name="massage" class="form-control">
+            <input type="text" name="message" class="form-control">
             <button type="submit">sent</button>
         </form>
     </div> 
@@ -58,7 +58,7 @@
 
         })
 
-        $('#line-massage').on('submit', function(e){
+        $('#line-message').on('submit', function(e){
 
             e.preventDefault()
             let message = $(this).find('input[name=message]').val()
