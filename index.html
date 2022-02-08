@@ -42,24 +42,30 @@
         const storage = getStorage(firebaseApp);
 
         const imageRef = ref(storage, "images");
-
         const liff_id = "1656870854-pPKVV2Ly";
         var profile = {};
+
         liff.init({
             liffId: liff_id
         }).then(async () => {
+
             if(liff.isInClient()){
+
                 profile = await liff.getProfile();
+
+            }else{
+                alert("กรุณาเปิดใช้งานในแอพ LINE")
             }
-            else{
-                alert("www4")
-            }
+
         })
-        $('#line-massage').on('submit', function(e){
-            e.preventDefault();
-            let massage = $(this).find('input[name=massage]').val();
-            let image = $(this).find('input[name=image]')[0].files[0];
-            let image_blob = URL.createObjectURL(image)
+
+        $('#line-message').on('submit', function(e){
+
+            e.preventDefault()
+            let message = $(this).find('input[name=message]').val()
+            let image = $(this).find('input[name=image]')[0].files[0]
+
+            const imageRef = ref(storage, "images/" + image.name);
 
             uploadBytes(imageRef, image, {
                 metadata: {
@@ -71,21 +77,30 @@
                 }
             }).then(snapshot => {
 
-                let url = snapshot.metadata.downloadURLs[0]
-                liff.sendMessages([{
-                    type: 'text',
-                    text: message
-                }, {
-                    type: 'image',
-                    originalContentUrl: url,
-                    previewImageUrl: url
-                }]).then(() => {
-                    console.log('Message sent')
-                    liff.closeWindow();
+                getDownloadURL(snapshot).then(url => {
+
+                    liff.sendMessages([{
+                        type: 'text',
+                        text: message
+                    }, {
+                        type: 'image',
+                        originalContentUrl: url,
+                        previewImageUrl: url
+                    }]).then(() => {
+                        console.log("Message sent");
+                        deleteObject(imageRef).then(() => {
+                            liff.closeWindow();
+                        })
+                    }).catch(error => {
+                        console.log("Error sending message: " + error);
+                    });
+
                 })
 
             })
+
         })
-    </script>
+        
+        </script>
   </body>
 </html>
